@@ -24,7 +24,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	defer limiter.Stop() // * Clean up the ticker
 
-	http.HandleFunc("/", handler) // * this a Go idiom - you are passing the function handler as a value, not calling it.
+	/*
+	 * This HandleFunc syntax is a Go idiom, you're passing the function handler as a value, not calling it.
+	 * http.HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request))
+	 * expects a function reference that matches the func(http.ResponseWriter, *http.Request) signature.
+	 * So passing the handler without () is passing the function definition itself, not executing it.
+	 * Go functions are 1st-class values, they can be assigned to variables or passed as arguments like any other data.
+	 */
+	http.HandleFunc("/", handler)
 	log.Println("Serving on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
