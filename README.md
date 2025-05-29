@@ -4,9 +4,9 @@ Rate Limiter using Context
 ## What does `Wait(ctx)` actually do?
 * The limiter never explicitly rejects requests. It just makes them wait for the next available tick.
 * Only `ctx.Done()` (case 2) or `l.quit` (case 3) cause `Wait()` to return an error.
-    - IF the client disconnects, the context is cancelled.
-    - IF I set a timeout(`context.WithTimeout`) and the wait exceeds it, the context expires.
-    - IF the app manually shuts down and closes `l.quit`, it returns early.
+    - IF the client disconnects, the context is cancelled (case 2).
+    - IF I set a timeout(`context.WithTimeout`) and the wait exceeds it, the context expires (case 2).
+    - IF the app manually shuts down and closes `l.quit`, it returns early (case 3).
 
 ## When is "too many requests" triggered?
 It is only triggered when the context times out before the ticker has a chance to release a token. Thats when `ctx.Done()` fires before `<-l.ticker.C` becomes available - and the handler returns a 429. 
