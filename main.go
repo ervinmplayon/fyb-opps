@@ -25,7 +25,7 @@ func main() {
 	defer limiter.Stop() // * Clean up the ticker
 
 	/*
-	 * This HandleFunc syntax is a Go idiom, you're passing the function handler as a value, not calling it.
+	 * This HandleFunc syntax is a Go idiom, I am passing the function handler as a value, not calling it.
 	 * http.HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request))
 	 * expects a function reference that matches the func(http.ResponseWriter, *http.Request) signature.
 	 * So passing the handler without () is passing the function definition itself, not executing it.
