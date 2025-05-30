@@ -15,5 +15,13 @@ It is only triggered when the context times out before the ticker has a chance t
 * And `limiter.Wait(cx)` is wrapped in `context.WithTimeout(ctx, 1*time.Second)`...
 * Then some of those requests will timeout before a token is ready and will return a 429.
 
+## Hard Throttle Feature
+* Requests within 5 per second succeed.
+* Subsequent requests within the same second gets a `429 Too Many Requests`
+* On the next second, the count resets.
+
 ## Future Feature Implementations
-* Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
+- [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
+- [ ] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
+- [ ] Sliding window: More precise throttling (less bursty)
+- [ ] Logging: Add logging for every rejection if needed

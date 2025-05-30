@@ -42,6 +42,7 @@ func main() {
 	 * Go functions are 1st-class values, they can be assigned to variables or passed as arguments like any other data.
 	 */
 	http.HandleFunc("/", defaultHandler)
+	http.HandleFunc("/honeypot", hardThrottleHandler)
 	log.Println("Serving on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
