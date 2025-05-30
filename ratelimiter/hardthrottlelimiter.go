@@ -21,3 +21,23 @@ func NewRateLimiter(limit int, interval time.Duration) *HardThrottleLimiter {
 		count:     0,
 	}
 }
+
+// * Allow returns true if request is within rate limit, false otherwise
+func (htl *HardThrottleLimiter) Allow() bool {
+	htl.mu.Lock()
+	defer htl.mu.Unlock()
+
+	now := time.Now()
+	if now.Sub(htl.timestamp) > htl.interval {
+		// * new window
+		htl.timestamp = now
+		htl.count = 0
+	}
+
+	if htl.count < htl.limit {
+		htl.count++
+		return true
+	}
+
+	return false // * limit exceeded
+}
