@@ -41,3 +41,5 @@ func (htl *HardThrottleLimiter) Allow() bool {
 
 	return false // * limit exceeded
 }
+
+// TODO: experiment if the "Seer of Many Futures" pattern can be leveraged
