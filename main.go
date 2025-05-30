@@ -43,6 +43,7 @@ func main() {
 	 */
 	http.HandleFunc("/", defaultHandler)
 	http.HandleFunc("/not-a-honeypot", hardThrottleHandler)
+	http.HandleFunc("/api", hardThrottleHandler)
 	log.Println("Serving on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
