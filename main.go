@@ -9,11 +9,12 @@ import (
 	"github.com/ervinmplayon/fyb-opps/ratelimiter"
 )
 
-var limiter = ratelimiter.NewLimiter(2 * time.Second)
+var defaultLimiter = ratelimiter.NewLimiter(2 * time.Second)
+var hardThrottleLimiter = ratelimiter.NewHardThrottleLimiter(5, time.Second)
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	if err := limiter.Wait(ctx); err != nil {
+	if err := defaultLimiter.Wait(ctx); err != nil {
 		http.Error(w, "Rate limit exceeded or context canceled", http.StatusTooManyRequests)
 		return
 	}
@@ -21,8 +22,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Request allowed at", time.Now())
 }
 
+func hardThrottleHandler(w http.ResponseWriter, r *http.Request) {
+	if !hardThrottleLimiter.Allow() {
+		http.Error(w, "Rate limit Exceeded", http.StatusTooManyRequests)
+		return
+	}
+
+	fmt.Fprintln(w, "OK - You passed the vibe check")
+}
+
 func main() {
-	defer limiter.Stop() // * Clean up the ticker
+	defer defaultLimiter.Stop() // * Clean up the ticker
 
 	/*
 	 * This HandleFunc syntax is a Go idiom, I am passing the function handler as a value, not calling it.
@@ -31,7 +41,7 @@ func main() {
 	 * So passing the handler without () is passing the function definition itself, not executing it.
 	 * Go functions are 1st-class values, they can be assigned to variables or passed as arguments like any other data.
 	 */
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", defaultHandler)
 	log.Println("Serving on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

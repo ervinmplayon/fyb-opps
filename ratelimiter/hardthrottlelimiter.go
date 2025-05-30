@@ -13,7 +13,7 @@ type HardThrottleLimiter struct {
 	count     int
 }
 
-func NewRateLimiter(limit int, interval time.Duration) *HardThrottleLimiter {
+func NewHardThrottleLimiter(limit int, interval time.Duration) *HardThrottleLimiter {
 	return &HardThrottleLimiter{
 		limit:     limit,
 		interval:  interval,
