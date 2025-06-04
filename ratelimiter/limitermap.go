@@ -21,3 +21,16 @@ func NewLimiterMap(limit int, interval time.Duration) *LimiterMap {
 		interval: interval,
 	}
 }
+
+func (lm *LimiterMap) getLimiter(ip string) *HardThrottleLimiter {
+	lm.mu.Lock()
+	defer lm.mu.Unlock()
+
+	if limiter, exists := lm.limiters[ip]; exists {
+		return limiter
+	}
+
+	limiter := NewHardThrottleLimiter(lm.limit, lm.interval)
+	lm.limiters[ip] = limiter
+	return limiter
+}
