@@ -34,3 +34,7 @@ func (lm *LimiterMap) getLimiter(ip string) *HardThrottleLimiter {
 	lm.limiters[ip] = limiter
 	return limiter
 }
+
+func (lm *LimiterMap) Allow(ip string) bool {
+	return lm.getLimiter(ip).Allow()
+}
