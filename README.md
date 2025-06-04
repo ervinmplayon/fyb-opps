@@ -28,6 +28,10 @@ It is only triggered when the context times out before the ticker has a chance t
 
 ## Future Feature Implementations
 - [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
-- [ ] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
+- [x] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
 - [ ] Sliding window: More precise throttling (less bursty)
 - [ ] Logging: Add logging for every rejection if needed
+- [ ] Ticket: integrate logger into hard throttle limiter
+- [ ] Ticket: integrate logger into limiter map
+- [ ] Add goroutine that expires old IPs
+- [ ] Add X-Forwarded-For support (for use behind reverse proxies) 
