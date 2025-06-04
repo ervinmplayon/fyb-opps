@@ -13,3 +13,11 @@ type LimiterMap struct {
 	limit    int
 	interval time.Duration
 }
+
+func NewLimiterMap(limit int, interval time.Duration) *LimiterMap {
+	return &LimiterMap{
+		limiters: make(map[string]*HardThrottleLimiter),
+		limit:    limit,
+		interval: interval,
+	}
+}
