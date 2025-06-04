@@ -21,6 +21,11 @@ It is only triggered when the context times out before the ticker has a chance t
 * On the next second, the count resets.
 * Listens on more complex endpoints
 
+## Per IP Address Limiter Version
+* Tracks each client by IP address
+* Allow each client up to `N` requests per interval
+* Reject clients who exceed the limit immediately (hard throttle)
+
 ## Future Feature Implementations
 - [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
 - [ ] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
