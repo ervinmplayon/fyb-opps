@@ -42,5 +42,7 @@ It is only triggered when the context times out before the ticker has a chance t
 - [ ] Logging: Add logging for every rejection if needed
 - [ ] Ticket: integrate logger into hard throttle limiter
 - [ ] Ticket: integrate logger into limiter map
-- [ ] Add `cleaner` goroutine that expires old IPs
+- [x] Add `cleaner` goroutine that expires old IPs
 - [ ] Add X-Forwarded-For support (for use behind reverse proxies) 
+- [ ] OPtimize for high concurrency (e.g., using `sync.Map`)
+- [ ] Logging added to the cleanup process. 
