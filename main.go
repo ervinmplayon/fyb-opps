@@ -52,7 +52,11 @@ func ipLimiterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	defer defaultLimiter.Stop() // * Clean up the ticker
+	// * Clean up the ticker
+	defer defaultLimiter.Stop()
+
+	// * goroutine cleanup: remove IPs not seen in 5 mins -- goroutine frequency: every 1 min
+	ipLimiter.StartCleanup(5*time.Minute, 1*time.Minute)
 
 	/*
 	 * This HandleFunc syntax is a Go idiom, I am passing the function handler as a value, not calling it.
