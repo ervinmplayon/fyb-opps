@@ -39,3 +39,24 @@ func (lm *LimiterMap) Allow(ip string) bool {
 	// * The Allow() in this returned bool is the Allow() function of HardThrottleLimiter
 	return lm.getLimiter(ip).Allow()
 }
+
+func (lm *LimiterMap) StartCleanup(maxIdle time.Duration, interval time.Duration) {
+	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			lm.mu.Lock()
+			now := time.Now()
+			for ip, limiter := range lm.limiters {
+				limiter.mu.Lock()
+				idle := now.Sub(limiter.lastSeen)
+				limiter.mu.Unlock()
+				if idle > maxIdle {
+					delete(lm.limiters, ip)
+				}
+			}
+			lm.mu.Unlock()
+		}
+	}()
+}
