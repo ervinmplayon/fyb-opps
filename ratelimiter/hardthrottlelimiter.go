@@ -30,6 +30,7 @@ func (htl *HardThrottleLimiter) Allow() bool {
 	defer htl.mu.Unlock()
 
 	now := time.Now()
+	htl.lastSeen = now // * update lastSeen on every call
 	if now.Sub(htl.timestamp) > htl.interval {
 		// * new window
 		htl.timestamp = now
