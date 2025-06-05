@@ -26,6 +26,11 @@ It is only triggered when the context times out before the ticker has a chance t
 * Allow each client up to `N` requests per interval
 * Reject clients who exceed the limit immediately (hard throttle)
 
+## Expiring Old IPs
+* The goal is to avoid memory bloat by cleaning up IPs that haven't sent requests in a while
+* Track `lastSeen` for each limiter
+* Run a background goroutine that periodically removes stale entries
+
 ## Future Feature Implementations
 - [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
 - [x] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
