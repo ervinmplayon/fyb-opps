@@ -10,6 +10,7 @@ type HardThrottleLimiter struct {
 	limit     int
 	interval  time.Duration
 	timestamp time.Time
+	lastSeen  time.Time
 	count     int
 }
 
@@ -18,6 +19,7 @@ func NewHardThrottleLimiter(limit int, interval time.Duration) *HardThrottleLimi
 		limit:     limit,
 		interval:  interval,
 		timestamp: time.Now(),
+		lastSeen:  time.Now(),
 		count:     0,
 	}
 }
