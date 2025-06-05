@@ -55,7 +55,11 @@ func main() {
 	// * Clean up the ticker
 	defer defaultLimiter.Stop()
 
-	// * goroutine cleanup: remove IPs not seen in 5 mins -- goroutine frequency: every 1 min
+	/*
+	 * goroutine cleanup: remove IPs not seen in 5 mins -- goroutine frequency: every 1 min
+	 * StartCleanup spins off a goroutine and does not block, can be safely called in main()
+	 * cleanup process is fire-and-forget - it will clean the map silently in the background.
+	 */
 	ipLimiter.StartCleanup(5*time.Minute, 1*time.Minute)
 
 	/*
