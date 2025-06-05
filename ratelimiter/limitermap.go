@@ -45,6 +45,7 @@ func (lm *LimiterMap) StartCleanup(maxIdle time.Duration, interval time.Duration
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
+		// * range "iterating " over ticker.C explanation found on README
 		for range ticker.C {
 			lm.mu.Lock()
 			now := time.Now()
