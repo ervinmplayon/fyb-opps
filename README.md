@@ -35,6 +35,11 @@ It is only triggered when the context times out before the ticker has a chance t
 * A goroutine periodically checks for stale IPs and removes them
 * This implementation is fully thread safe
 
+## Iterating (range) over ticker.C deep dive
+The `time.Ticker` has a field `C` which is a channel that sends a value at each tick interval. The `range` keyword can iterate over channels, receiving values sent on the channel until the channel is closed.
+When I use `for range ticker.C`, the loop will block and wait for a value to be sent on the `ticker.C` channel. After receiving a value, the loop will execute its body, and then it will wait again for the next value. This makes `range` a convenient way to continuously execute code at regular time intervals defined by the ticker.
+The loop terminates when the ticker is stopped using `ticker.Stop()` which closes the channel. 
+
 ## Future Feature Implementations
 - [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
 - [x] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
