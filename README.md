@@ -49,5 +49,6 @@ The loop terminates when the ticker is stopped using `ticker.Stop()` which close
 - [ ] Ticket: integrate logger into limiter map
 - [x] Add `cleaner` goroutine that expires old IPs
 - [ ] Add X-Forwarded-For support (for use behind reverse proxies) 
-- [ ] OPtimize for high concurrency (e.g., using `sync.Map`)
+- [ ] Optimize for high concurrency (e.g., using `sync.Map`)
 - [ ] Logging added to the cleanup process. 
+- [ ] Understand how this implementation is different from a `gin` router setup implementation 
