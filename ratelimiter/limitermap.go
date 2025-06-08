@@ -8,31 +8,31 @@ import (
 // * IP-based limiter manager, add a wrapper to manager rate limiters per IP.
 
 type LimiterMap struct {
-	limiters map[string]*HardThrottleLimiter
-	mu       sync.Mutex
+	limiters sync.Map // * Formerly key: string (IP), value: *HardThrottleLimiter
 	limit    int
 	interval time.Duration
 }
 
 func NewLimiterMap(limit int, interval time.Duration) *LimiterMap {
 	return &LimiterMap{
-		limiters: make(map[string]*HardThrottleLimiter),
 		limit:    limit,
 		interval: interval,
 	}
 }
 
 func (lm *LimiterMap) getLimiter(ip string) *HardThrottleLimiter {
-	lm.mu.Lock()
-	defer lm.mu.Unlock()
-
-	if limiter, exists := lm.limiters[ip]; exists {
-		return limiter
+	if limiter, ok := lm.limiters.Load(ip); ok {
+		return limiter.(*HardThrottleLimiter)
 	}
 
-	limiter := NewHardThrottleLimiter(lm.limit, lm.interval)
-	lm.limiters[ip] = limiter
-	return limiter
+	// * double-checked locking to avoid races
+	newLimiter := &HardThrottleLimiter{
+		limit:    lm.limit,
+		interval: lm.interval,
+	}
+	// * LoadOrStore() guarantess that only one limiter gets used for a given IP.
+	actual, _ := lm.limiters.LoadOrStore(ip, newLimiter)
+	return actual.(*HardThrottleLimiter)
 }
 
 func (lm *LimiterMap) Allow(ip string) bool {
@@ -40,24 +40,21 @@ func (lm *LimiterMap) Allow(ip string) bool {
 	return lm.getLimiter(ip).Allow()
 }
 
-func (lm *LimiterMap) StartCleanup(maxIdle time.Duration, interval time.Duration) {
+func (lm *LimiterMap) StartCleanup(interval time.Duration, ttl time.Duration) {
 	go func() {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
 		// * range "iterating " over ticker.C explanation found on README
 		for range ticker.C {
-			lm.mu.Lock()
 			now := time.Now()
-			for ip, limiter := range lm.limiters {
-				limiter.mu.Lock()
-				idle := now.Sub(limiter.lastSeen)
-				limiter.mu.Unlock()
-				if idle > maxIdle {
-					delete(lm.limiters, ip)
+			lm.limiters.Range(func(key, value any) bool {
+				limiter := value.(*HardThrottleLimiter)
+				if now.Sub(limiter.lastSeen) > ttl {
+					lm.limiters.Delete(key)
 				}
-			}
-			lm.mu.Unlock()
+				return true
+			})
 		}
 	}()
 }
