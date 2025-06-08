@@ -64,6 +64,18 @@ Using `sync.Map` avoids traditional locks for reads and writes by using atomic o
 * Reads are lock-free
 * Writes are optimized (especially after `LoadOrStore` warm-up)
 * Multiple goroutines can access/update independently without blocking each other. 
+### Summary
+With Mutex:
+* Slower under load
+* Goroutines block each other
+* Simpler logic
+* Suitable for low traffic
+
+With `sync.Map`
+* Optimized for high concurrency
+* Goroutines run independently
+* Slightly more complex logic
+* Preferred at scale. 
 
 ## Future Feature Implementations
 - [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
