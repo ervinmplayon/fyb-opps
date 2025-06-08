@@ -47,7 +47,23 @@ High concurrency enables many clients (or goroutines) to send requests at the sa
 * Systems behind load balancers or gateways
 * Anything deployed on ECS, K8s, etc
 ### What does this introduce?
-Current implementation uses `mu sync.Mutex`. When thousands of requests hit simultaneously, they all try to locl `mu` in `getlimiter(ip)`
+#### 1. Contention on Shared Resources
+Current implementation uses `mu sync.Mutex`. When thousands of requests hit simultaneously, they all try to locl `mu` in `getlimiter(ip)`.
+```
+lm.mu.Lock()
+defer lm.mu.Unlock()
+```
+This will result in lock contention, which slows everyone down -- they sit around waiting to acquire the mutex.
+#### 2.Risk of Latency Spikes
+In real-time apps (APIs, ad bidding, etc) a delay of even tens of milliseconds matters. Mutex contention in high concurrency environments can:
+* Introduce inconsistent response times
+* Block unrelated requests just because they access the same `LimiterMap`.
+
+#### 3. Scalability Benefits of Lock-Free Access
+Using `sync.Map` avoids traditional locks for reads and writes by using atomic operations and internal sharding under the hood. That means:
+* Reads are lock-free
+* Writes are optimized (especially after `LoadOrStore` warm-up)
+* Multiple goroutines can access/update independently without blocking each other. 
 
 ## Future Feature Implementations
 - [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
