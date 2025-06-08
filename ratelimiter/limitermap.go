@@ -30,7 +30,7 @@ func (lm *LimiterMap) getLimiter(ip string) *HardThrottleLimiter {
 		limit:    lm.limit,
 		interval: lm.interval,
 	}
-	// * LoadOrStore() guarantess that only one limiter gets used for a given IP.
+	// * LoadOrStore() guarantees that only one limiter gets used for a given IP.
 	actual, _ := lm.limiters.LoadOrStore(ip, newLimiter)
 	return actual.(*HardThrottleLimiter)
 }
