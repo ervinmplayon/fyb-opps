@@ -86,6 +86,6 @@ With `sync.Map`
 - [ ] Ticket: integrate logger into limiter map
 - [x] Add `cleaner` goroutine that expires old IPs
 - [ ] Add X-Forwarded-For support (for use behind reverse proxies) 
-- [ ] Optimize for high concurrency (e.g., using `sync.Map`)
+- [x] Optimize for high concurrency (e.g., using `sync.Map`)
 - [ ] Logging added to the cleanup process. 
 - [ ] Understand how this implementation is different from a `gin` router setup implementation 
