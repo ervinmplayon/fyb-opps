@@ -50,7 +50,10 @@ func (lm *LimiterMap) StartCleanup(interval time.Duration, ttl time.Duration) {
 			now := time.Now()
 			lm.limiters.Range(func(key, value any) bool {
 				limiter := value.(*HardThrottleLimiter)
-				if now.Sub(limiter.lastSeen) > ttl {
+				limiter.mu.Lock()
+				lastSeen := limiter.lastSeen
+				limiter.mu.Unlock()
+				if now.Sub(lastSeen) > ttl {
 					lm.limiters.Delete(key)
 				}
 				return true
