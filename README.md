@@ -80,12 +80,16 @@ With `sync.Map`
 ## Future Feature Implementations
 - [x] Immediately hard throttle and reject requests if they arrive too fast, instead of waiting. This requires a change in design from a token bucket that just throttles to a leaky bucket or fixed window that enforces a limit per interval with no waiting. 
 - [x] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
-- [ ] Sliding window: More precise throttling (less bursty)
+- [x] Add `cleaner` goroutine that expires old IPs
+- [x] Optimize for high concurrency (e.g., using `sync.Map`)
+- [ ] `Allow` method to return the remaining quota 
 - [ ] Logging: Add logging for every rejection if needed
 - [ ] Ticket: integrate logger into hard throttle limiter
 - [ ] Ticket: integrate logger into limiter map
-- [x] Add `cleaner` goroutine that expires old IPs
-- [ ] Add X-Forwarded-For support (for use behind reverse proxies) 
-- [x] Optimize for high concurrency (e.g., using `sync.Map`)
 - [ ] Logging added to the cleanup process. 
+- [ ] Sliding window: More precise throttling (less bursty)
 - [ ] Understand how this implementation is different from a `gin` router setup implementation 
+- [ ] Add X-Forwarded-For support (for use behind reverse proxies) 
+
+
+
