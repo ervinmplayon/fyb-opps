@@ -48,7 +48,7 @@ High concurrency enables many clients (or goroutines) to send requests at the sa
 * Anything deployed on ECS, K8s, etc
 ### What does this introduce?
 #### 1. Contention on Shared Resources
-Current implementation uses `mu sync.Mutex`. When thousands of requests hit simultaneously, they all try to locl `mu` in `getlimiter(ip)`.
+Current implementation uses `mu sync.Mutex`. When thousands of requests hit simultaneously, they all try to lock `mu` in `getlimiter(ip)`.
 ```
 lm.mu.Lock()
 defer lm.mu.Unlock()
