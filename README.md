@@ -88,8 +88,11 @@ With `sync.Map`
 - [ ] Ticket: integrate logger into limiter map
 - [ ] Logging added to the cleanup process. 
 - [ ] Sliding window: More precise throttling (less bursty)
-- [ ] Understand how this implementation is different from a `gin` router setup implementation 
 - [ ] Add X-Forwarded-For support (for use behind reverse proxies) 
+
+## Concepts to Learn
+- [ ] Understand how this implementation is different from a `gin` router setup implementation 
+- [ ] Double-Checked Locking: A Concurrency-Safe Pattern
 
 
 
