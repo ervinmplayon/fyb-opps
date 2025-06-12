@@ -21,6 +21,10 @@ func NewLimiterMap(limit int, interval time.Duration) *LimiterMap {
 }
 
 func (lm *LimiterMap) getLimiter(ip string) *HardThrottleLimiter {
+	/*
+	 * This is a concurrency-safe pattern is called "doubled-checked" locking with sync.Map, which avoids race conditions.
+	 * `sync.Map.Load()` is concurrency-safe, it's fine if multiple goroutines reads from the map at once.
+	 */
 	if limiter, ok := lm.limiters.Load(ip); ok {
 		return limiter.(*HardThrottleLimiter)
 	}
