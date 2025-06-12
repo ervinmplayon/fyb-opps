@@ -100,6 +100,6 @@ With `sync.Map`
 ## Concepts to Learn
 - [ ] Understand how this implementation is different from a `gin` router setup implementation 
 - [ ] Double-Checked Locking: A Concurrency-Safe Pattern
-
+- [ ] `LoadOrStore()`
 
 
