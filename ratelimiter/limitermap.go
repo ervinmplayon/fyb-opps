@@ -29,12 +29,23 @@ func (lm *LimiterMap) getLimiter(ip string) *HardThrottleLimiter {
 		return limiter.(*HardThrottleLimiter)
 	}
 
-	// * double-checked locking to avoid races
+	/*
+	 * Double-checked locking to avoid races. At this point,
+	 * I might not be the only goroutine trying to do this step and thats ok.
+	 */
 	newLimiter := &HardThrottleLimiter{
 		limit:    lm.limit,
 		interval: lm.interval,
 	}
-	// * LoadOrStore() guarantees that only one limiter gets used for a given IP.
+
+	/*
+	 * This is the safety gate.
+	 * `sync.Map.LoadOrStore()` checks again if the IP is already present.
+	 * IF it is already present, it returns the existing limiter (`actual`)
+	 * IF not, it stores the `newLimiter` safely, and I GET THAT BACK.
+	 * This method is atomic. It handles the locking internally so that I don't
+	 * need to use `sync.Mutex` externally.
+	 */
 	actual, _ := lm.limiters.LoadOrStore(ip, newLimiter)
 	return actual.(*HardThrottleLimiter)
 }
