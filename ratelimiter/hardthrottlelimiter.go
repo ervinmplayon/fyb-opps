@@ -29,8 +29,10 @@ func (htl *HardThrottleLimiter) Allow() bool {
 	htl.mu.Lock()
 	defer htl.mu.Unlock()
 
+	// * Update lastSeen on every call. This ensures we can determine when the IP
+	// * was last active, regardless of the rate-limiting outcome.
 	now := time.Now()
-	htl.lastSeen = now // * update lastSeen on every call
+	htl.lastSeen = now
 	if now.Sub(htl.timestamp) > htl.interval {
 		// * new window
 		htl.timestamp = now
