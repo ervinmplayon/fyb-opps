@@ -33,22 +33,24 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func hardThrottleHandler(w http.ResponseWriter, r *http.Request) {
-	if !hardThrottleLimiter.Allow() {
+	allowed, remaining := hardThrottleLimiter.Allow()
+	if !allowed {
 		http.Error(w, "Rate limit Exceeded", http.StatusTooManyRequests)
 		return
 	}
 
-	fmt.Fprintln(w, "OK - You passed the vibe check")
+	fmt.Fprintf(w, "OK - You passed the vibe check. Remaining quota: %d\n", remaining)
 }
 
 func ipLimiterHandler(w http.ResponseWriter, r *http.Request) {
 	ip := getIP(r)
-	if !ipLimiter.Allow(ip) {
+	allowed, remaining := ipLimiter.Allow(ip)
+	if !allowed {
 		http.Error(w, "Rate Limit exceeded", http.StatusTooManyRequests)
 		return
 	}
 
-	fmt.Fprintf(w, "Msg from %s. You're within the rate limit.\n", ip)
+	fmt.Fprintf(w, "Msg from %s. You're within the rate limit. Remaining quota: %d\n", ip, remaining)
 }
 
 func main() {
