@@ -50,7 +50,7 @@ func (lm *LimiterMap) getLimiter(ip string) *HardThrottleLimiter {
 	return actual.(*HardThrottleLimiter)
 }
 
-func (lm *LimiterMap) Allow(ip string) bool {
+func (lm *LimiterMap) Allow(ip string) (bool, int) {
 	// * The Allow() in this returned bool is the Allow() function of HardThrottleLimiter
 	return lm.getLimiter(ip).Allow()
 }
