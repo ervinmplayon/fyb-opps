@@ -26,7 +26,7 @@ func NewHardThrottleLimiter(limit int, interval time.Duration) *HardThrottleLimi
 
 // * Allow returns both the permission to proceeed (bool) and remaning quota:
 // * if request is within rate limit, false otherwise.
-func (htl *HardThrottleLimiter) Allow() bool {
+func (htl *HardThrottleLimiter) Allow() (bool, int) {
 	htl.mu.Lock()
 	defer htl.mu.Unlock()
 
@@ -42,10 +42,10 @@ func (htl *HardThrottleLimiter) Allow() bool {
 
 	if htl.count < htl.limit {
 		htl.count++
-		return true
+		return true, htl.limit - htl.count
 	}
 
-	return false // * limit exceeded
+	return false, 0 // * limit exceeded
 }
 
 // TODO: experiment if the "Seer of Many Futures" pattern can be leveraged
