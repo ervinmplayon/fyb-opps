@@ -89,7 +89,7 @@ With `sync.Map`
 - [x] Per-client limiting: Use a `map[string]*HardThrottleLimiter` keyed by IP or token
 - [x] Add `cleaner` goroutine that expires old IPs
 - [x] Optimize for high concurrency (e.g., using `sync.Map`)
-- [ ] `Allow` method to return the remaining quota 
+- [x] `Allow` method to return the remaining quota 
 - [ ] Logging: Add logging for every rejection if needed
 - [ ] Ticket: integrate logger into hard throttle limiter
 - [ ] Ticket: integrate logger into limiter map
