@@ -24,7 +24,8 @@ func NewHardThrottleLimiter(limit int, interval time.Duration) *HardThrottleLimi
 	}
 }
 
-// * Allow returns true if request is within rate limit, false otherwise
+// * Allow returns both the permission to proceeed (bool) and remaning quota:
+// * if request is within rate limit, false otherwise.
 func (htl *HardThrottleLimiter) Allow() bool {
 	htl.mu.Lock()
 	defer htl.mu.Unlock()
